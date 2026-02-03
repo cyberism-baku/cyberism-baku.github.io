@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CYBERISM | Pro Arena</title>
+    <title>CYBERISM | Ultimate Arena</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -19,193 +19,207 @@
             margin: 0; padding: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* Auth Screen */
-        #auth-screen { position: fixed; inset: 0; background: var(--dark); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-box { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--neon-blue); text-align: center; width: 100%; max-width: 350px; box-shadow: 0 0 25px rgba(0, 243, 255, 0.3); }
-        
-        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #000; color: white; box-sizing: border-box; font-size: 16px; outline: none; }
-        .btn { background: var(--neon-blue); color: #000; padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
-        .btn:active { transform: scale(0.98); }
+        /* UI Elementləri */
+        .auth-box, .modal-box { background: var(--card); padding: 25px; border-radius: 15px; border: 2px solid var(--neon-blue); text-align: center; width: 90%; max-width: 350px; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #334155; background: #000; color: white; font-size: 16px; }
+        .btn { background: var(--neon-blue); color: #000; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin: 5px 0; }
 
-        /* Header */
-        header { padding: 10px 20px; background: #0c111d; border-bottom: 1px solid var(--neon-purple); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        header { padding: 10px 15px; background: #0c111d; border-bottom: 1px solid var(--neon-purple); display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .tab-content { display: none; flex: 1; padding: 15px; overflow-y: auto; padding-bottom: 80px; }
 
-        /* Layouts */
-        .container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        .tab-content { display: none; flex: 1; padding: 15px; overflow-y: auto; }
+        /* Dostlar Səhifəsi */
+        .friends-page { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 2000; padding: 20px; flex-direction: column; }
 
-        /* Arena Mode (Match Start olanda bura keçir) */
-        #arena-mode { 
-            display: none; position: absolute; inset: 0; background: var(--dark); z-index: 500;
-            flex-direction: row; padding: 10px; gap: 10px;
-        }
-
-        /* Chess Board */
-        .board-wrapper { flex: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .board { 
-            display: grid; grid-template-columns: repeat(8, min(11vw, 60px)); 
-            grid-template-rows: repeat(8, min(11vw, 60px)); 
-            border: 5px solid #1e293b; border-radius: 8px; 
-        }
-        .sq { display: flex; align-items: center; justify-content: center; font-size: min(8vw, 40px); cursor: pointer; user-select: none; }
+        /* Arena Mode */
+        #arena-mode { display: none; position: fixed; inset: 0; background: var(--dark); z-index: 3000; flex-direction: column; }
+        .board { display: grid; grid-template-columns: repeat(8, 12vw); grid-template-rows: repeat(8, 12vw); margin: auto; border: 3px solid #1e293b; }
+        @media (min-width: 800px) { .board { grid-template-columns: repeat(8, 50px); grid-template-rows: repeat(8, 50px); } }
+        .sq { display: flex; align-items: center; justify-content: center; font-size: 8vw; }
+        @media (min-width: 800px) { .sq { font-size: 35px; } }
         .l { background: var(--sq-l); } .d { background: var(--sq-d); }
-        .sel { background: rgba(57, 255, 20, 0.4) !important; }
-        .w { color: white; } .b { color: black; filter: drop-shadow(0 0 1px white); }
 
-        /* Arena Chat */
-        .arena-sidebar { flex: 1; background: #0c111d; border-radius: 12px; display: flex; flex-direction: column; border: 1px solid #1e293b; max-width: 350px; }
-        .arena-chat-box { flex: 1; overflow-y: auto; padding: 10px; font-size: 14px; }
-        .arena-chat-input { display: flex; padding: 10px; gap: 5px; border-top: 1px solid #1e293b; }
+        /* Çat Sistemləri */
+        .chat-container { background: #000; border-radius: 10px; height: 200px; overflow-y: auto; padding: 10px; margin-bottom: 10px; border: 1px solid #1e293b; }
+        .msg { margin-bottom: 5px; font-size: 13px; }
+        .msg b { color: var(--neon-blue); }
 
         /* Navbar */
-        nav { height: 65px; background: #0c111d; border-top: 1px solid var(--neon-blue); display: flex; justify-content: space-around; align-items: center; }
-        .nav-btn { background: none; border: none; color: gray; font-size: 11px; cursor: pointer; text-align: center; }
+        nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: #0c111d; border-top: 1px solid var(--neon-blue); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-btn { background: none; border: none; color: gray; font-size: 11px; text-align: center; }
         .nav-btn.active { color: var(--neon-blue); }
 
-        /* Responsive */
-        @media (max-width: 800px) {
-            #arena-mode { flex-direction: column; overflow-y: auto; }
-            .arena-sidebar { max-width: 100%; height: 250px; }
-            .board { grid-template-columns: repeat(8, 11.5vw); grid-template-rows: repeat(8, 11.5vw); }
-        }
-
-        .user-row { background: #1a2233; padding: 10px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        /* Rutbə Rəngləri */
+        .rank-gold { color: gold; font-weight: bold; }
+        .rank-diamond { color: #b9f2ff; text-shadow: 0 0 5px #00f3ff; }
+        
+        #admin-panel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999; padding: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen">
+    <div onclick="checkAdmin()" style="position:fixed; top:0; right:0; width:50px; height:50px; z-index:10001;"></div>
+
+    <div id="auth-screen" style="position:fixed; inset:0; background:var(--dark); z-index:10000; display:flex; align-items:center; justify-content:center;">
         <div class="auth-box">
-            <h1 style="color: var(--neon-blue); margin:0; letter-spacing: 2px;">CYBERISM</h1>
-            <p style="font-size:12px; color:gray; margin-bottom:20px;">Giriş ID və ya Yeni Ad yazın</p>
-            <input type="text" id="user-in" placeholder="Username / ID">
+            <h2 style="color:var(--neon-blue);">CYBERISM</h2>
+            <input type="text" id="user-in" placeholder="Ad və ya ID">
             <input type="password" id="pass-in" placeholder="Şifrə">
             <button class="btn" onclick="login()">DAXİL OL</button>
-            <button class="btn" style="background:var(--neon-purple); color:white; margin-top:10px;" onclick="register()">QEYDİYYAT</button>
+            <button class="btn" style="background:var(--neon-purple); color:#fff;" onclick="register()">QEYDİYYAT</button>
         </div>
     </div>
 
     <header>
-        <span id="display-name" style="font-weight:bold; color:var(--neon-blue);">Yüklənir...</span>
-        <span style="color:var(--neon-green); font-weight:bold;">PUAN: <span id="display-puan">0</span></span>
+        <div><span id="u-rank">Rank</span> | <b id="u-name">...</b></div>
+        <div style="color:var(--neon-green)">🏆 <span id="u-puan">0</span></div>
     </header>
 
     <div class="container">
         <div id="game-tab" class="tab-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-            <div style="text-align:center; margin-bottom:20px;">
-                <h2 style="margin:0;">XOŞ GƏLDİN!</h2>
-                <p style="color:gray;">Hazırsansa rəqib axtarışına başla.</p>
-            </div>
-            <button class="btn" style="width:250px; height:60px; font-size:18px;" id="match-btn" onclick="startMatchmaking()">MATCH START</button>
-        </div>
-
-        <div id="arena-mode">
-            <div class="board-wrapper">
-                <div style="margin-bottom:10px; width: 100%; display:flex; justify-content:space-between;">
-                    <span>Rəqib: <b id="opp-name" style="color:red">...</b></span>
-                    <button onclick="exitMatch()" style="background:none; border:none; color:gray; cursor:pointer;">Oyundan Çıx</button>
-                </div>
-                <div id="chess-board" class="board"></div>
-            </div>
-            
-            <div class="arena-sidebar">
-                <div style="padding:10px; border-bottom:1px solid #1e293b; font-weight:bold; color:var(--neon-blue);">OYUN ÇATI</div>
-                <div id="arena-chat" class="arena-chat-box"></div>
-                <div class="arena-chat-input">
-                    <input type="text" id="arena-msg" placeholder="Mesaj..." style="margin:0; padding:8px;">
-                    <button class="btn" style="width:60px; padding:5px;" onclick="sendArenaChat()">OK</button>
-                </div>
-            </div>
+            <button class="btn" style="height:80px; font-size:20px;" id="start-btn" onclick="matchmake()">MATCH START</button>
         </div>
 
         <div id="leader-tab" class="tab-content">
-            <h2 style="color:#fbbf24;">Dünya Sıralaması</h2>
-            <div id="leaderboard"></div>
+            <h3 style="color:#fbbf24; text-align:center;">GLOBAL SIRALAMA</h3>
+            <div id="leaderboard-list"></div>
         </div>
 
-        <div id="friends-tab" class="tab-content">
-            <h2>Dostlar</h2>
-            <input type="text" id="friend-id-in" placeholder="Dost ID yaz...">
-            <button class="btn" onclick="addFriend()">Əlavə Et</button>
-            <div id="friends-list" style="margin-top:15px;"></div>
+        <div id="chat-tab" class="tab-content">
+            <h3>GLOBAL CHAT</h3>
+            <div id="global-chat-box" class="chat-container" style="height:60vh;"></div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="global-msg" placeholder="Hamıya yaz...">
+                <button class="btn" style="width:70px;" onclick="sendGlobalChat()">OK</button>
+            </div>
         </div>
     </div>
 
-    <nav id="bottom-nav">
-        <div class="nav-btn active" onclick="switchTab('game', this)"><i>🎮</i>ARENA</div>
-        <div class="nav-btn" onclick="switchTab('leader', this)"><i>🏆</i>TOP</div>
-        <div class="nav-btn" onclick="switchTab('friends', this)"><i>👥</i>DOSTLAR</div>
+    <div id="friends-page" class="friends-page">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Dostlarım</h2>
+            <button class="btn" style="width:60px;" onclick="toggleFriends()">X</button>
+        </div>
+        <div style="display:flex; gap:5px;">
+            <input type="text" id="friend-id-in" placeholder="ID yaz: ism1234">
+            <button class="btn" style="width:100px;" onclick="sendFriendRequest()">Dost Ol</button>
+        </div>
+        <div id="friend-requests" style="margin-top:10px; color:var(--neon-green)"></div>
+        <hr style="width:100%; border:0.5px solid #334155;">
+        <div id="my-friends-list"></div>
+    </div>
+
+    <div id="arena-mode">
+        <div style="padding:10px; display:flex; justify-content:space-between; background:#0c111d;">
+            <span>Rəqib: <b id="opp-name">Axtarılır...</b></span>
+            <button onclick="exitGame()" style="background:red; border:none; color:white; border-radius:5px; padding:5px 10px;">ÇIX</button>
+        </div>
+        <div id="chess-board" class="board"></div>
+        <div style="flex:1; display:flex; flex-direction:column; padding:10px;">
+            <div id="arena-chat-box" class="chat-container"></div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="arena-msg" placeholder="Rəqibə yaz...">
+                <button class="btn" style="width:60px;" onclick="sendArenaChat()">GÖNDƏR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <h2 style="color:red;">ADMIN PANEL</h2>
+        <div id="admin-users" style="height:70vh; overflow-y:auto;"></div>
+        <button class="btn" onclick="document.getElementById('admin-panel').style.display='none'">BAĞLA</button>
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-btn active" onclick="switchTab('game', this)"><i>🎮</i><br>ARENA</div>
+        <div class="nav-btn" onclick="toggleFriends()"><i>👥</i><br>DOSTLAR</div>
+        <div class="nav-btn" onclick="switchTab('leader', this)"><i>🏆</i><br>TOP 10</div>
+        <div class="nav-btn" onclick="switchTab('chat', this)"><i>💬</i><br>CHAT</div>
     </nav>
 
     <script>
         const firebaseConfig = { databaseURL: "https://cyberism-7104c-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         const game = new Chess();
-        const boardEl = document.getElementById('chess-board');
         let myData = null;
-        let selectedSq = null;
+        let adminClicks = 0;
 
+        // AUTH & LOGİN
         function register() {
             const u = document.getElementById('user-in').value;
             const p = document.getElementById('pass-in').value;
-            if(u.length < 3) return alert("Ad qısadır!");
+            if(u.length < 3) return alert("Ad çox qısadır!");
             const id = "ism" + Math.floor(1000 + Math.random() * 9000);
-            db.ref('users/' + id).set({ username: u, password: p, id: id, puan: 0, status: "online" })
-            .then(() => {
-                alert("Qeydiyyat tamamlandı! Sizin ID: " + id);
-                loginDirect(id, p);
+            const userObj = { username: u, password: p, id: id, puan: 0, status: "online", friends: [] };
+            db.ref('users/' + id).set(userObj).then(() => {
+                alert("ID-niz: " + id);
+                loginSuccess(userObj);
             });
         }
 
         function login() {
-            loginDirect(document.getElementById('user-in').value, document.getElementById('pass-in').value);
-        }
-
-        function loginDirect(id, p) {
+            const id = document.getElementById('user-in').value;
+            const p = document.getElementById('pass-in').value;
             db.ref('users/' + id).once('value', s => {
                 const u = s.val();
-                if(u && u.password === p) {
-                    myData = u;
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('display-name').innerText = u.username;
-                    document.getElementById('display-puan').innerText = u.puan;
-                    init();
-                } else alert("Məlumatlar səhvdir!");
+                if(u && u.password === p) loginSuccess(u);
+                else alert("Xətalı məlumat!");
             });
         }
 
-        function startMatchmaking() {
-            const btn = document.getElementById('match-btn');
-            btn.innerText = "AXTARILIR...";
-            btn.disabled = true;
+        function loginSuccess(u) {
+            myData = u;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('u-name').innerText = u.username;
+            updateUI();
+            initRealtime();
+        }
 
+        // RANK SİSTEMİ
+        function getRank(p) {
+            if(p < 100) return {n: "Bürünc", c: "gray"};
+            if(p < 500) return {n: "Gümüş", c: "silver"};
+            if(p < 1000) return {n: "Qızıl", c: "rank-gold"};
+            return {n: "Efsanevi", c: "rank-diamond"};
+        }
+
+        function updateUI() {
+            const r = getRank(myData.puan);
+            document.getElementById('u-rank').innerText = r.n;
+            document.getElementById('u-rank').className = r.c;
+            document.getElementById('u-puan').innerText = myData.puan;
+        }
+
+        // DOSTLUQ SİSTEMİ
+        function toggleFriends() {
+            const p = document.getElementById('friends-page');
+            p.style.display = (p.style.display === 'flex' ? 'none' : 'flex');
+        }
+
+        function sendFriendRequest() {
+            const fid = document.getElementById('friend-id-in').value;
+            if(!fid || fid === myData.id) return;
+            db.ref('requests/' + fid + '/' + myData.id).set({ fromName: myData.username });
+            alert("Dostluq sorğusu göndərildi!");
+        }
+
+        // MATCHMAKING & GAME
+        function matchmake() {
+            document.getElementById('start-btn').innerText = "AXTARILIR...";
             setTimeout(() => {
-                const names = ["Shadow_Azeri", "Cyber_Knight", "Alpha_Zero", "ISM_Player", "Elite_King"];
-                document.getElementById('opp-name').innerText = names[Math.floor(Math.random()*names.length)];
-                
-                // Arena Mode aktivləşdirilir
                 document.getElementById('arena-mode').style.display = 'flex';
-                document.getElementById('bottom-nav').style.display = 'none';
+                document.getElementById('opp-name').innerText = "Bot_Grandmaster";
                 game.reset();
                 drawBoard();
             }, 2000);
         }
 
-        function exitMatch() {
-            if(confirm("Oyundan çıxmaq istəyirsən?")) {
-                document.getElementById('arena-mode').style.display = 'none';
-                document.getElementById('bottom-nav').style.display = 'flex';
-                document.getElementById('match-btn').innerText = "MATCH START";
-                document.getElementById('match-btn').disabled = false;
-            }
-        }
-
         function drawBoard() {
-            boardEl.innerHTML = '';
+            const bEl = document.getElementById('chess-board');
+            bEl.innerHTML = '';
             const b = game.board();
             const pMap = { 'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'P': '♙', 'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔' };
+            
             for (let i = 0; i < 8; i++) {
                 for (let j = 0; j < 8; j++) {
                     const s = document.createElement('div');
@@ -213,78 +227,122 @@
                     const p = b[i][j];
                     if (p) {
                         s.textContent = pMap[p.color === 'w' ? p.type.toUpperCase() : p.type.toLowerCase()];
-                        s.classList.add(p.color === 'w' ? 'w' : 'b');
+                        s.style.color = p.color === 'w' ? 'white' : 'black';
                     }
                     s.onclick = () => handleMove(String.fromCharCode(97 + j) + (8 - i));
-                    boardEl.appendChild(s);
+                    bEl.appendChild(s);
                 }
             }
         }
 
         function handleMove(pos) {
-            if (selectedSq === pos) { selectedSq = null; drawBoard(); return; }
-            if (selectedSq) {
-                const move = game.move({ from: selectedSq, to: pos, promotion: 'q' });
-                if (move) {
-                    selectedSq = null; drawBoard();
-                    if(game.in_checkmate()) { alert("TEBRİKLER!"); updatePuan(100); exitMatch(); }
-                    setTimeout(botLogic, 700);
-                } else { selectedSq = pos; drawBoard(); highlight(pos); }
-            } else { selectedSq = pos; highlight(pos); }
-        }
-
-        function botLogic() {
-            const moves = game.moves();
-            if (moves.length > 0) {
-                game.move(moves[Math.floor(Math.random() * moves.length)]);
+            const moves = game.move({ from: selectedSq, to: pos, promotion: 'q' });
+            if (moves) {
                 drawBoard();
-                if(game.in_checkmate()) { alert("MƏĞLUB OLDUNUZ!"); updatePuan(-30); exitMatch(); }
+                setTimeout(() => {
+                    const m = game.moves();
+                    if(m.length > 0) game.move(m[Math.floor(Math.random()*m.length)]);
+                    drawBoard();
+                }, 500);
             }
+            selectedSq = pos;
         }
 
-        function updatePuan(v) {
-            myData.puan = Math.max(0, myData.puan + v);
-            document.getElementById('display-puan').innerText = myData.puan;
-            db.ref('users/' + myData.id).update({ puan: myData.puan });
+        // CHAT SİSTEMLƏRİ
+        function sendGlobalChat() {
+            const m = document.getElementById('global-msg').value;
+            if(!m) return;
+            db.ref('global_chat').push({ u: myData.username, m: m });
+            document.getElementById('global-msg').value = '';
         }
 
         function sendArenaChat() {
             const m = document.getElementById('arena-msg').value;
-            if(!m) return;
-            const chat = document.getElementById('arena-chat');
-            chat.innerHTML += `<div><b>Sən:</b> ${m}</div>`;
+            const box = document.getElementById('arena-chat-box');
+            box.innerHTML += `<div class="msg"><b>Sən:</b> ${m}</div>`;
             document.getElementById('arena-msg').value = '';
-            chat.scrollTop = chat.scrollHeight;
-            
-            // Bot cavab simulyasiyası (Opsional)
-            setTimeout(() => {
-                const replies = ["Yaxşı gediş idi!", "Hələ bitməyib...", "Uğurlar!", "😏"];
-                chat.innerHTML += `<div style="color:red"><b>Rəqib:</b> ${replies[Math.floor(Math.random()*replies.length)]}</div>`;
-                chat.scrollTop = chat.scrollHeight;
-            }, 1500);
+            box.scrollTop = box.scrollHeight;
         }
 
-        function switchTab(t, el) {
-            document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none');
-            document.getElementById(t + '-tab').style.display = (t==='game'?'flex':'block');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
-        }
+        // REALTIME UPDATES
+        function initRealtime() {
+            // Global Chat
+            db.ref('global_chat').limitToLast(20).on('value', s => {
+                const box = document.getElementById('global-chat-box');
+                box.innerHTML = '';
+                s.forEach(c => {
+                    box.innerHTML += `<div class="msg"><b>${c.val().u}:</b> ${c.val().m}</div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
 
-        function init() {
-            // Liderlər
+            // Liderlik
             db.ref('users').orderByChild('puan').limitToLast(10).on('value', s => {
-                const lb = document.getElementById('leaderboard');
-                lb.innerHTML = '';
-                let a = []; s.forEach(c => a.push(c.val()));
-                a.reverse().forEach((u, i) => {
-                    lb.innerHTML += `<div class="user-row"><span>${i+1}. ${u.username}</span><b>${u.puan}</b></div>`;
+                const list = document.getElementById('leaderboard-list');
+                list.innerHTML = '';
+                let arr = []; s.forEach(c => arr.push(c.val()));
+                arr.reverse().forEach((u, i) => {
+                    const r = getRank(u.puan);
+                    list.innerHTML += `<div style="padding:10px; background:#1a2233; margin:5px; border-radius:10px; display:flex; justify-content:space-between;">
+                        <span>${i+1}. ${u.username} <small class="${r.c}">(${r.n})</small></span>
+                        <b>${u.puan}</b>
+                    </div>`;
+                });
+            });
+
+            // Dostluq Sorğuları
+            db.ref('requests/' + myData.id).on('value', s => {
+                const div = document.getElementById('friend-requests');
+                div.innerHTML = '';
+                s.forEach(r => {
+                    div.innerHTML += `Sorğu: ${r.val().fromName} <button onclick="acceptFriend('${r.key}','${r.val().fromName}')">Qəbul</button>`;
                 });
             });
         }
 
-        function highlight(pos) {
-            // Seliqeli seçim vizualı
+        function acceptFriend(id, name) {
+            db.ref('users/' + myData.id + '/friends/' + id).set(name);
+            db.ref('users/' + id + '/friends/' + myData.id).set(myData.username);
+            db.ref('requests/' + myData.id + '/' + id).remove();
+            alert("Artıq dostsunuz!");
+        }
+
+        function switchTab(t, el) {
+            document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none');
+            document.getElementById(t + '-tab').style.display = 'flex';
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function exitGame() {
+            document.getElementById('arena-mode').style.display = 'none';
+            document.getElementById('start-btn').innerText = "MATCH START";
+        }
+
+        // ADMIN GATE
+        function checkAdmin() {
+            adminClicks++;
+            if(adminClicks >= 5) {
+                const p = prompt("Admin Şifrəsi:");
+                if(p === "qaqa0202@") {
+                    document.getElementById('admin-panel').style.display = 'block';
+                    loadAdminUsers();
+                }
+                adminClicks = 0;
+            }
+        }
+
+        function loadAdminUsers() {
+            db.ref('users').on('value', s => {
+                const div = document.getElementById('admin-users');
+                div.innerHTML = '';
+                s.forEach(u => {
+                    div.innerHTML += `<div style="padding:10px; border-bottom:1px solid #333;">
+                        ${u.val().username} (${u.key}) - ${u.val().puan} Puan
+                        <button onclick="db.ref('users/${u.key}').remove()">SİL</button>
+                    </div>`;
+                });
+            });
         }
     </script>
 </body>
